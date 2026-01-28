@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from app.config import DevelopmentConfig, ProductionConfig
+from app.db import get_events_collection
 
 
 def create_app():
@@ -13,5 +14,8 @@ def create_app():
         config_class = DevelopmentConfig
     
     app.config.from_object(config_class)
+    
+    # Initialize database
+    app.events_collection = get_events_collection(app)
     
     return app
