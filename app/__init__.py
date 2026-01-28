@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from app.config import DevelopmentConfig, ProductionConfig
 from app.db import init_db
+from app.routes import webhook_bp
 
 
 def create_app():
@@ -17,5 +18,8 @@ def create_app():
     
     # Initialize database
     init_db(app)
+    
+    # Register blueprint
+    app.register_blueprint(webhook_bp)
     
     return app
