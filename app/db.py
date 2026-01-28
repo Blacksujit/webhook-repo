@@ -2,28 +2,21 @@ from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
 
-_client = None
-
-
-def get_client(app):
-    global _client
-    if _client is None:
-        mongodb_uri = app.config['MONGODB_URI']
-        _client = MongoClient(mongodb_uri)
-    return _client
-
-
-def get_db(app):
-    client = get_client(app)
+def init_db(app):
+    mongodb_uri = app.config['MONGODB_URI']
     mongodb_db = app.config['MONGODB_DB']
-    return client[mongodb_db]
+    
+    client = MongoClient(mongodb_uri)
+    db = client[mongodb_db]
+    
+    # Create unique index on request_id
+    events = db.events
+    events.create_index("request_id", unique=True)
+    
+    # Store client and collections in app context
+    app.mongo_client = client
+    app.events_collection = events
 
 
 def get_events_collection(app):
-    db = get_db(app)
-    events = db.events
-    
-    # Ensure unique index on request_id
-    events.create_index("request_id", unique=True)
-    
-    return events
+    return app.events_collection
