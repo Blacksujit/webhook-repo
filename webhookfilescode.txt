@@ -1,1 +1,6 @@
 all the code written in this files 
+
+Ingress (done) → Normalize → Persist → Read API → UI
+
+
+we will follow this flow to build the webhook system
