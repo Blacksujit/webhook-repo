@@ -4,7 +4,7 @@
 *.pyc
 *.pyd
 *~
-__pycache__/
+/app/__pycache__/
 
 # C extensions
 *.so
@@ -103,3 +103,7 @@ ipython_config.py
 !config.py
 !server.py
 !.gitignore
+
+
+# Python cache files in app folder
+app/__pycache__/
