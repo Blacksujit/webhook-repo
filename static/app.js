@@ -5,6 +5,7 @@ class GitHubActivityDashboard {
         this.isPolling = false;
         this.eventsListElement = null;
         this.emptyStateElement = null;
+        this.renderedEventIds = new Set();
     }
 
     async fetchEvents() {
@@ -56,11 +57,6 @@ class GitHubActivityDashboard {
             this.emptyStateElement = document.getElementById('empty-state');
         }
 
-        // Clear existing events
-        if (this.eventsListElement) {
-            this.eventsListElement.innerHTML = '';
-        }
-
         // Show empty state if no events
         if (!this.events || this.events.length === 0) {
             if (this.emptyStateElement) {
@@ -80,11 +76,14 @@ class GitHubActivityDashboard {
             this.eventsListElement.style.display = 'grid';
         }
 
-        // Render each event card
+        // Render only new events (not already rendered)
         this.events.forEach(event => {
-            const eventCard = this.createEventCard(event);
-            if (this.eventsListElement) {
-                this.eventsListElement.appendChild(eventCard);
+            if (!this.renderedEventIds.has(event.request_id)) {
+                const eventCard = this.createEventCard(event);
+                if (this.eventsListElement) {
+                    this.eventsListElement.appendChild(eventCard);
+                }
+                this.renderedEventIds.add(event.request_id);
             }
         });
     }

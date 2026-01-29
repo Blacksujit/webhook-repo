@@ -1,10 +1,15 @@
 import hmac
 import hashlib
-from flask import Blueprint, request, current_app, jsonify
+from flask import Blueprint, request, current_app, jsonify, render_template
 from app.github_handlers import normalize_github_event
 from app.db import get_events_collection
 
 webhook_bp = Blueprint('webhook', __name__)
+
+
+@webhook_bp.route('/')
+def index():
+    return render_template('index.html')
 
 
 @webhook_bp.route('/webhook', methods=['POST'])

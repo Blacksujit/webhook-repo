@@ -10,6 +10,11 @@ try:
     GITHUB_WEBHOOK_SECRET = os.environ.get('GITHUB_WEBHOOK_SECRET')
     FLASK_ENV = os.environ.get('FLASK_ENV')
 
+    print(f"Environment loaded:")
+    print(f"MongoDB URI: {MONGODB_URI}")
+    print(f"Database: {MONGODB_DB}")
+    print(f"Flask Env: {FLASK_ENV}")
+
     if not MONGODB_URI or not MONGODB_DB:
         raise ValueError("MONGODB_URI and MONGODB_DB environment variables must be set")
 
