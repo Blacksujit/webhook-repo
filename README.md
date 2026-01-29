@@ -7,12 +7,7 @@ This system implements a GitHub webhook listener that captures repository activi
 
 ## Video Walkthrough
     
-<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
-  <iframe src="https://flonnect.com/video/embed/a0c5c45b210e-470e-a93d-23638b85e8bd?autoplay=true&reactions=true&loop=true&captions=true&playbackSpeed=true&mute=true&analytics=true&showVolume=true&showLogo=true&showPlayPause=true&showTime=true&showProgress=true&color=6528F7&showTitle=true" 
-    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
-    frameborder="0" allow="autoplay;" allowfullscreen>
-  </iframe>
-</div>
+![Video Link](https://flonnect.com/video/a0c5c45b210e-470e-a93d-23638b85e8bd)
 
 ## Architecture Overview
 
