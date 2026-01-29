@@ -6,11 +6,13 @@ class GitHubActivityDashboard {
         this.eventsListElement = null;
         this.emptyStateElement = null;
         this.renderedEventIds = new Set();
-        this.refreshWindowMs = 15000; // 15 seconds
+        this.refreshWindowMs = 300000; // 5 minutes instead of 15 seconds
+        this.lastPollTime = null;
     }
 
     async fetchEvents() {
         try {
+            console.log('🔄 Fetching events from /events...');
             const response = await fetch('/events');
             
             if (!response.ok) {
@@ -18,6 +20,7 @@ class GitHubActivityDashboard {
             }
             
             const events = await response.json();
+            console.log(`📥 Received ${events.length} events`);
             this.handleEventsReceived(events);
             
         } catch (error) {
@@ -28,6 +31,7 @@ class GitHubActivityDashboard {
 
     handleEventsReceived(events) {
         this.events = events;
+        this.lastPollTime = new Date();
         this.updateLastUpdatedTime();
         this.renderEvents();
     }
@@ -53,7 +57,14 @@ class GitHubActivityDashboard {
         const eventTime = new Date(eventTimestamp);
         const currentTime = new Date();
         const timeDifference = currentTime - eventTime;
-        return timeDifference <= this.refreshWindowMs;
+        const isWithinWindow = timeDifference <= this.refreshWindowMs;
+        
+        // Debug logging for first few events
+        if (this.renderedEventIds.size < 3) {
+            console.log(`🕐 Event age: ${Math.round(timeDifference/1000)}s, within window: ${isWithinWindow}`);
+        }
+        
+        return isWithinWindow;
     }
 
     renderEvents() {
@@ -69,6 +80,8 @@ class GitHubActivityDashboard {
         const recentEvents = this.events.filter(event => {
             return this.isEventWithinRefreshWindow(event.timestamp);
         });
+
+        console.log(`🎯 ${recentEvents.length} events within refresh window`);
 
         // Show empty state if no recent events
         if (!recentEvents || recentEvents.length === 0) {
@@ -90,6 +103,7 @@ class GitHubActivityDashboard {
         }
 
         // Render only new events within refresh window (not already rendered)
+        let newEventsCount = 0;
         recentEvents.forEach(event => {
             if (!this.renderedEventIds.has(event.request_id)) {
                 const eventCard = this.createEventCard(event);
@@ -97,8 +111,13 @@ class GitHubActivityDashboard {
                     this.eventsListElement.appendChild(eventCard);
                 }
                 this.renderedEventIds.add(event.request_id);
+                newEventsCount++;
             }
         });
+
+        if (newEventsCount > 0) {
+            console.log(`✅ Rendered ${newEventsCount} new events`);
+        }
     }
 
     createEventCard(event) {
@@ -176,9 +195,11 @@ class GitHubActivityDashboard {
 
     startPolling() {
         if (this.isPolling) {
+            console.log('⚠️ Polling already started');
             return;
         }
 
+        console.log('🚀 Starting polling every 15 seconds...');
         this.isPolling = true;
         
         // Initial fetch
@@ -186,14 +207,18 @@ class GitHubActivityDashboard {
         
         // Set up polling every 15 seconds
         this.pollingInterval = setInterval(() => {
+            console.log('⏰ Polling interval triggered');
             this.fetchEvents();
         }, 15000);
+        
+        console.log('✅ Polling started successfully');
     }
 
     stopPolling() {
         if (this.pollingInterval) {
             clearInterval(this.pollingInterval);
             this.pollingInterval = null;
+            console.log('🛑 Polling stopped');
         }
         
         this.isPolling = false;
