@@ -1,8 +1,13 @@
 # GitHub Webhook Activity Monitor
 
+
 ## Project Overview
 
 This system implements a GitHub webhook listener that captures repository activity and displays it in real-time through a web interface. It listens for push, pull request, and merge events from a monitored repository, normalizes the data, stores it in MongoDB, and presents it through a polling-based dashboard.
+
+## Video Walkthrough
+    
+[Video Link: Add your video URL here]
 
 ## Architecture Overview
 
@@ -94,17 +99,6 @@ The dashboard implements intelligent polling and filtering:
 - 15-second refresh window filters out stale events
 - Events are displayed in chronological order (newest first)
 
-## Video Walkthrough
-
-A detailed video walkthrough demonstrating the system setup, configuration, and live operation is available. The video covers:
-
-- Complete setup process from repository clone to running application
-- GitHub webhook configuration with ngrok tunneling
-- Real-time demonstration of push, pull request, and merge events
-- UI behavior showing polling, deduplication, and filtering
-- Technical explanation of merge event detection
-
-[Video Link: Add your video URL here]
 
 ## Design Decisions
 
