@@ -6,6 +6,7 @@ class GitHubActivityDashboard {
         this.eventsListElement = null;
         this.emptyStateElement = null;
         this.renderedEventIds = new Set();
+        this.refreshWindowMs = 15000; // 15 seconds
     }
 
     async fetchEvents() {
@@ -48,6 +49,13 @@ class GitHubActivityDashboard {
         }
     }
 
+    isEventWithinRefreshWindow(eventTimestamp) {
+        const eventTime = new Date(eventTimestamp);
+        const currentTime = new Date();
+        const timeDifference = currentTime - eventTime;
+        return timeDifference <= this.refreshWindowMs;
+    }
+
     renderEvents() {
         // Initialize DOM elements if not already done
         if (!this.eventsListElement) {
@@ -57,8 +65,13 @@ class GitHubActivityDashboard {
             this.emptyStateElement = document.getElementById('empty-state');
         }
 
-        // Show empty state if no events
-        if (!this.events || this.events.length === 0) {
+        // Filter events within refresh window
+        const recentEvents = this.events.filter(event => {
+            return this.isEventWithinRefreshWindow(event.timestamp);
+        });
+
+        // Show empty state if no recent events
+        if (!recentEvents || recentEvents.length === 0) {
             if (this.emptyStateElement) {
                 this.emptyStateElement.style.display = 'block';
             }
@@ -76,8 +89,8 @@ class GitHubActivityDashboard {
             this.eventsListElement.style.display = 'grid';
         }
 
-        // Render only new events (not already rendered)
-        this.events.forEach(event => {
+        // Render only new events within refresh window (not already rendered)
+        recentEvents.forEach(event => {
             if (!this.renderedEventIds.has(event.request_id)) {
                 const eventCard = this.createEventCard(event);
                 if (this.eventsListElement) {
